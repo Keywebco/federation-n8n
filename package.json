@@ -1,0 +1,15 @@
+{
+  "name": "federation-n8n",
+  "version": "1.0.0",
+  "description": "NextXus Federation Automation Hub — Sovereign n8n instance",
+  "scripts": {
+    "start": "n8n start",
+    "build": "echo 'No build step needed'"
+  },
+  "dependencies": {
+    "n8n": "latest"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
