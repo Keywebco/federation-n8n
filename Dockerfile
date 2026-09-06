@@ -1,14 +1,17 @@
 FROM n8nio/n8n:latest
 
-# Set working directory
+USER root
+
+# Create data directory with proper permissions
+RUN mkdir -p /home/node/.n8n && chown -R node:node /home/node/.n8n
+
+USER node
+
 WORKDIR /home/node
 
-# n8n uses port 5678 by default
-EXPOSE 5678
+# Render dynamically assigns PORT; n8n must bind to it
+# The entrypoint script handles PORT via N8N_PORT
+EXPOSE ${PORT:-5678}
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD wget --no-verbose --tries=1 --spider http://localhost:5678/healthz || exit 1
-
-# Start n8n
-CMD ["n8n", "start"]
+# Start n8n using a shell wrapper so PORT is evaluated at runtime
+CMD ["sh", "-c", "export N8N_PORT=${PORT:-5678} && n8n start"]
