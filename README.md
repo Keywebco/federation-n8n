@@ -1,56 +1,41 @@
-# Federation n8n — Sovereign Automation Layer
+# Federation Automation Hub
 
-## Purpose
-This is the **NextXus Federation's automation hub** — the connective tissue between the private vault and all external systems (sites, social, newsletters, downstream services).
-
-Self-hosted [n8n](https://n8n.io) deployed on Render as a persistent Docker web service.
+A lightweight, sovereign automation hub for the NextXus Federation. Built as a custom Express.js service after determining n8n exceeds Render free-tier memory limits (512MB vs n8n's ~600MB+ startup).
 
 ## Architecture
-```
-┌─────────────────────┐
-│  Federation Vault    │  (GitHub: Keywebco/federation-private-vault)
-│  Source of Truth     │
-└────────┬────────────┘
-         │ webhooks / polling
-         ▼
-┌─────────────────────┐
-│  federation-n8n      │  ← THIS SERVICE
-│  Automation Hub      │  (https://federation-n8n.onrender.com)
-│  Port 5678           │
-└────────┬────────────┘
-         │ triggers
-         ▼
-┌─────────────────────┐
-│  External Systems    │
-│  - Sites (Render)    │
-│  - Social (Twitter)  │
-│  - Email (Gmail)     │
-│  - Gumroad           │
-│  - Discord           │
-│  - YouTube           │
-└─────────────────────┘
-```
+- **Runtime**: Node.js 20 / Express.js
+- **Memory footprint**: ~40MB (vs n8n's 600MB+)
+- **Hosting**: Render free tier web service
+- **Auth**: Bearer token via `FEDERATION_MASTER_AUTH_CODE`
 
-## Access
-- **URL**: https://federation-n8n.onrender.com
-- **Auth**: Basic auth (federation / [master auth code])
-- **API**: https://federation-n8n.onrender.com/api/v1/
+## Built-in Workflows
 
-## Starter Workflows
-1. **Vault Heartbeat Monitor** — Polls LAST_UPDATED.md in vault every 30 min
-2. **GitHub → Vault Sync Alert** — Triggers on vault push events
-3. **Federation Status** — Webhook endpoint returning vault health
+### 1. Vault Heartbeat Monitor
+- `GET /api/workflows/heartbeat/run` — Pings the GitHub vault, logs uptime
+- Runs on internal cron every 6 hours
 
-## Environment
-- Runtime: Docker (n8nio/n8n:latest)
-- Storage: Render persistent disk (1GB at /home/node/.n8n)
-- Timezone: America/Chicago (CDT)
-- Diagnostics: Disabled (sovereign, no telemetry)
+### 2. GitHub → Vault Sync Alert  
+- `GET /api/workflows/sync-alert/run` — Checks recent vault commits, flags anomalies
+- Runs on internal cron every 12 hours
+
+### 3. Federation Status
+- `GET /api/workflows/federation-status/run` — Aggregates system health across endpoints
+- Runs on internal cron every 4 hours
+
+## API Endpoints
+- `GET /` — Dashboard UI
+- `GET /health` — Health check
+- `GET /api/workflows` — List all workflows
+- `GET /api/workflows/:id/run` — Trigger a workflow manually
+- `GET /api/workflows/:id/logs` — View workflow execution logs
+
+## Environment Variables
+| Variable | Required | Description |
+|---|---|---|
+| `PORT` | Yes | Server port (Render sets this) |
+| `FEDERATION_MASTER_AUTH_CODE` | Yes | Bearer auth token |
+| `GITHUB_TOKEN` | Yes | GitHub PAT for vault access |
+| `VAULT_REPO` | No | Default: `Keywebco/federation-private-vault` |
 
 ## Deployment
-Auto-deploys from this repo's `main` branch via Render.
-
-## Notes
-- Ephemeral storage fallback: If Render disk is unavailable on free tier, workflows persist in memory only and must be re-created after restart.
-- Encryption key stored securely — never commit to repo.
-- This is a Federation-sovereign service. No external telemetry, no third-party tracking.
+Deployed automatically via Render on push to `main` branch of `Keywebco/federation-n8n`.

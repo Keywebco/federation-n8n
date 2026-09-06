@@ -3,24 +3,14 @@ services:
     name: federation-n8n
     runtime: node
     buildCommand: npm install
-    startCommand: npx n8n start
+    startCommand: node server.js
     plan: free
     envVars:
-      - key: N8N_HOST
-        value: "0.0.0.0"
-      - key: N8N_PORT
-        fromPort:
-          name: default
-          port: 10000
-      - key: WEBHOOK_URL
-        value: "https://federation-n8n.onrender.com"
-      - key: N8N_EDITOR_BASE_URL
-        value: "https://federation-n8n.onrender.com"
-      - key: N8N_ENCRYPTION_KEY
+      - key: PORT
+        value: "10000"
+      - key: FEDERATION_MASTER_AUTH_CODE
         sync: false
-      - key: N8N_DIAGNOSTICS_ENABLED
-        value: "false"
-      - key: GENERIC_TIMEZONE
-        value: "America/Chicago"
-      - key: DB_TYPE
-        value: "sqlite"
+      - key: GITHUB_TOKEN
+        sync: false
+      - key: VAULT_REPO
+        value: "Keywebco/federation-private-vault"
