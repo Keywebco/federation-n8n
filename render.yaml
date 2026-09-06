@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: federation-n8n
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    healthCheckPath: /healthz
+    envVars:
+      - key: N8N_BASIC_AUTH_ACTIVE
+        value: "true"
+      - key: N8N_BASIC_AUTH_USER
+        value: "federation"
+      - key: N8N_BASIC_AUTH_PASSWORD
+        sync: false
+      - key: N8N_HOST
+        value: "0.0.0.0"
+      - key: N8N_PORT
+        value: "5678"
+      - key: WEBHOOK_URL
+        value: "https://federation-n8n.onrender.com"
+      - key: N8N_ENCRYPTION_KEY
+        sync: false
+      - key: N8N_DIAGNOSTICS_ENABLED
+        value: "false"
+      - key: N8N_PERSONALIZATION_ENABLED
+        value: "false"
+      - key: N8N_METRICS
+        value: "true"
+      - key: EXECUTIONS_DATA_PRUNE
+        value: "true"
+      - key: EXECUTIONS_DATA_MAX_AGE
+        value: "168"
+      - key: GENERIC_TIMEZONE
+        value: "America/Chicago"
+      - key: DB_TYPE
+        value: "sqlite"
+      - key: DB_SQLITE_VACUUM_ON_STARTUP
+        value: "true"
+    disk:
+      name: n8n-data
+      mountPath: /home/node/.n8n
+      sizeGB: 1

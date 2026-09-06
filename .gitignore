@@ -1,0 +1,5 @@
+.n8n/
+*.sqlite
+node_modules/
+.env
+*.log
