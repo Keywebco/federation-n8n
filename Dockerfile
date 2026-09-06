@@ -1,17 +1,15 @@
 FROM n8nio/n8n:latest
 
-USER root
+# Render requires the app to listen on PORT (default 10000)
+# Override n8n's default port via environment
+ENV N8N_PORT=10000
+ENV N8N_HOST=0.0.0.0
+ENV N8N_PROTOCOL=https
+ENV N8N_SECURE_COOKIE=false
+ENV DB_TYPE=sqlite
 
-# Create data directory with proper permissions
-RUN mkdir -p /home/node/.n8n && chown -R node:node /home/node/.n8n
+# Expose the Render port
+EXPOSE 10000
 
-USER node
-
-WORKDIR /home/node
-
-# Render dynamically assigns PORT; n8n must bind to it
-# The entrypoint script handles PORT via N8N_PORT
-EXPOSE ${PORT:-5678}
-
-# Start n8n using a shell wrapper so PORT is evaluated at runtime
-CMD ["sh", "-c", "export N8N_PORT=${PORT:-5678} && n8n start"]
+# Start n8n
+CMD ["n8n", "start"]
