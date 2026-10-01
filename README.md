@@ -6,7 +6,7 @@ A lightweight, sovereign automation hub for the NextXus Federation. Built as a c
 - **Runtime**: Node.js 20 / Express.js
 - **Memory footprint**: ~40MB (vs n8n's 600MB+)
 - **Hosting**: Render free tier web service
-- **Auth**: Bearer token via `FEDERATION_MASTER_AUTH_CODE`
+- **Auth**: Bearer token via `FEDERATION_AUTH_CODE` (legacy `FEDERATION_MASTER_AUTH_CODE` still accepted)
 
 ## Built-in Workflows
 
@@ -33,7 +33,8 @@ A lightweight, sovereign automation hub for the NextXus Federation. Built as a c
 | Variable | Required | Description |
 |---|---|---|
 | `PORT` | Yes | Server port (Render sets this) |
-| `FEDERATION_MASTER_AUTH_CODE` | Yes | Bearer auth token |
+| `FEDERATION_AUTH_CODE` | Yes | Bearer auth token (primary name) |
+| `FEDERATION_MASTER_AUTH_CODE` | No | Legacy alias, used only if `FEDERATION_AUTH_CODE` is unset |
 | `GITHUB_TOKEN` | Yes | GitHub PAT for vault access |
 | `VAULT_REPO` | No | Default: `Keywebco/federation-private-vault` |
 

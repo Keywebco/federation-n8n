@@ -32,7 +32,7 @@ const state = {
 // --- Auth middleware ---
 function authCheck(req, res, next) {
   const authHeader = req.headers.authorization;
-  const authCode = process.env.FEDERATION_AUTH_CODE;
+  const authCode = process.env.FEDERATION_AUTH_CODE || process.env.FEDERATION_MASTER_AUTH_CODE; // legacy name kept as fallback
   if (!authCode) return next(); // No auth configured, allow
   if (!authHeader) return res.status(401).json({ error: 'Authorization required' });
   const token = authHeader.replace('Bearer ', '');

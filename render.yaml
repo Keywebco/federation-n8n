@@ -8,6 +8,10 @@ services:
     envVars:
       - key: PORT
         value: "10000"
+      # server.js reads FEDERATION_AUTH_CODE (primary). Set this one.
+      - key: FEDERATION_AUTH_CODE
+        sync: false
+      # Legacy name, still honored by server.js as a fallback.
       - key: FEDERATION_MASTER_AUTH_CODE
         sync: false
       - key: GITHUB_TOKEN
